@@ -51,6 +51,7 @@ class ExperimentConfig:
     attn_a: float = 0.5
     cos_a: float = 0.5
     rej_thresh: float = 0.4
+    model_folder_path: str = "facebook/VGGT-1B"
 
 
 def safe_empty_cache() -> None:
@@ -132,7 +133,7 @@ class RobustVGGTExperiment:
     def __init__(self, config: ExperimentConfig):
         self.config = config
         self.device, self.amp_dtype = select_device_and_dtype()
-        self.model = VGGT.from_pretrained("facebook/VGGT-1B").to(self.device)
+        self.model = VGGT.from_pretrained(config.model_folder_path).to(self.device)
         self.model.eval()
         self.model.requires_grad_(False)
 
@@ -573,6 +574,7 @@ def parse_args() -> ExperimentConfig:
     parser.add_argument("--attn_a", type=float, default=0.5, help="Attention weight.")
     parser.add_argument("--cos_a", type=float, default=0.5, help="Cosine similarity weight.")
     parser.add_argument("--rej-thresh", type=float, default=0.4, help="Rejection threshold.")
+    parser.add_argument("--model_folder_path", type=str, default="facebook/VGGT-1B", help="Model folder path.")
 
     args = parser.parse_args()
 
@@ -583,6 +585,7 @@ def parse_args() -> ExperimentConfig:
         attn_a=args.attn_a,
         cos_a=args.cos_a,
         rej_thresh=args.rej_thresh,
+        model_folder_path=args.model_folder_path,
     )
 
 
